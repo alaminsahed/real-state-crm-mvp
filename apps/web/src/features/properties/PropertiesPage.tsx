@@ -1,9 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EnvironmentOutlined, HomeOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Input, InputNumber, Space, Table, Tag, Typography } from 'antd';
+import { Button, Card, Collapse, Form, Input, InputNumber, Modal, Space, Table, Tag } from 'antd';
+import { useMemo, useState } from 'react';
 import { api } from '../../lib/api';
 
 export function PropertiesPage() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [titleFilter, setTitleFilter] = useState('');
+  const [addressFilter, setAddressFilter] = useState('');
+  const [minPriceFilter, setMinPriceFilter] = useState<number | null>(null);
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
   const properties = useQuery({ queryKey: ['properties'], queryFn: api.properties.list });
@@ -12,72 +17,86 @@ export function PropertiesPage() {
     mutationFn: api.properties.create,
     onSuccess: () => {
       form.resetFields();
+      setIsCreateModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ['properties'] });
     },
   });
 
+  const filteredProperties = useMemo(() => {
+    const normalizedTitle = titleFilter.trim().toLowerCase();
+    const normalizedAddress = addressFilter.trim().toLowerCase();
+
+    return (properties.data ?? []).filter((property) => {
+      const matchesTitle = (property.title ?? '').toLowerCase().includes(normalizedTitle);
+      const matchesAddress = (property.address ?? '').toLowerCase().includes(normalizedAddress);
+      const matchesMinPrice = minPriceFilter == null ? true : (property.price ?? 0) >= minPriceFilter;
+
+      return matchesTitle && matchesAddress && matchesMinPrice;
+    });
+  }, [addressFilter, minPriceFilter, properties.data, titleFilter]);
+
   return (
     <Space direction="vertical" className="w-full" size="large">
-      <Card className="overflow-hidden border-0 shadow-lg">
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-2xl bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-600 px-6 py-7 text-white">
-            <Tag color="cyan" className="mb-3 border-0 px-3 py-1 text-xs font-semibold">
-              Featured Inventory
-            </Tag>
-            <h2 className="m-0 text-2xl font-semibold">Create premium listings in seconds.</h2>
-            <p className="mb-0 mt-3 max-w-xl text-blue-100">
-              Use this showcase-ready module to onboard inventory and present your portfolio with a polished,
-              investor-friendly vibe.
-            </p>
-            <div className="mt-6 flex items-center gap-2 text-blue-50">
-              <HomeOutlined />
-              <span>{properties.data?.length ?? 0} properties in catalog</span>
-            </div>
-          </div>
-          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
-            <Typography.Title level={5} className="!mb-4 !mt-0">
-              Add New Property
-            </Typography.Title>
-            <Form form={form} layout="vertical" onFinish={(values) => createProperty.mutate(values)}>
-              <Form.Item name="title" label="Title" rules={[{ required: true, message: 'Title is required' }]}>
-                <Input placeholder="Modern waterfront villa" />
-              </Form.Item>
-              <Form.Item
-                name="address"
-                label="Address"
-                rules={[{ required: true, message: 'Address is required' }]}
-              >
-                <Input placeholder="Downtown district, New York" />
-              </Form.Item>
-              <Form.Item name="price" label="Price (USD)">
-                <InputNumber className="w-full" min={0} placeholder="1200000" />
-              </Form.Item>
-              <Form.Item name="description" label="Description">
-                <Input.TextArea rows={3} placeholder="Short highlight for demo listing..." />
-              </Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={createProperty.isPending}
-                icon={<PlusOutlined />}
-                className="w-full"
-              >
-                Create Listing
-              </Button>
-            </Form>
-          </div>
-        </div>
-      </Card>
+      <div className="flex justify-end">
+        <Button
+          type="primary"
+          onClick={() => setIsCreateModalOpen(true)}
+          icon={<PlusOutlined />}
+        >
+          Add Property
+        </Button>
+      </div>
+      <Collapse
+        className="crm-leads-filters"
+        defaultActiveKey={['filters']}
+        items={[
+          {
+            key: 'filters',
+            label: 'Filters',
+            children: (
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <Input
+                  placeholder="Filter by title"
+                  value={titleFilter}
+                  onChange={(event) => setTitleFilter(event.target.value)}
+                />
+                <Input
+                  placeholder="Filter by address"
+                  value={addressFilter}
+                  onChange={(event) => setAddressFilter(event.target.value)}
+                />
+                <InputNumber
+                  className="w-full"
+                  min={0}
+                  placeholder="Minimum price"
+                  value={minPriceFilter}
+                  onChange={(value) => setMinPriceFilter(value)}
+                />
+                <Button
+                  onClick={() => {
+                    setTitleFilter('');
+                    setAddressFilter('');
+                    setMinPriceFilter(null);
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       <Card
         title="Property Catalog"
         extra={<Tag color="blue">{properties.data?.length ?? 0} items</Tag>}
-        className="rounded-2xl border border-slate-100 shadow-sm"
+        className="crm-leads-card rounded-2xl border border-slate-100 shadow-sm"
       >
         <Table
+          className="crm-leads-table"
           rowKey="id"
           loading={properties.isLoading}
-          dataSource={properties.data ?? []}
+          dataSource={filteredProperties}
           pagination={{ pageSize: 6 }}
           columns={[
             {
@@ -112,6 +131,39 @@ export function PropertiesPage() {
           ]}
         />
       </Card>
+
+      <Modal
+        title="Create Property"
+        open={isCreateModalOpen}
+        onCancel={() => {
+          form.resetFields();
+          setIsCreateModalOpen(false);
+        }}
+        footer={null}
+        destroyOnHidden
+      >
+        <Form form={form} layout="vertical" onFinish={(values) => createProperty.mutate(values)}>
+          <Form.Item name="title" label="Title" rules={[{ required: true, message: 'Title is required' }]}>
+            <Input placeholder="Modern waterfront villa" />
+          </Form.Item>
+          <Form.Item
+            name="address"
+            label="Address"
+            rules={[{ required: true, message: 'Address is required' }]}
+          >
+            <Input placeholder="Downtown district, New York" />
+          </Form.Item>
+          <Form.Item name="price" label="Price (USD)">
+            <InputNumber className="w-full" min={0} placeholder="1200000" />
+          </Form.Item>
+          <Form.Item name="description" label="Description">
+            <Input.TextArea rows={3} placeholder="Short highlight for demo listing..." />
+          </Form.Item>
+          <Button type="primary" htmlType="submit" loading={createProperty.isPending} icon={<PlusOutlined />}>
+            Create Listing
+          </Button>
+        </Form>
+      </Modal>
     </Space>
   );
 }

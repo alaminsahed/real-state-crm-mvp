@@ -5,6 +5,7 @@ import { DashboardPage } from './features/dashboard/DashboardPage';
 import { CustomersPage } from './features/customers/CustomersPage';
 import { LeadDetailPage } from './features/leads/LeadDetailPage';
 import { LeadsPage } from './features/leads/LeadsPage';
+import { IntegrationsPage } from './features/integrations/IntegrationsPage';
 import { PropertiesPage } from './features/properties/PropertiesPage';
 import { TasksPage } from './features/tasks/TasksPage';
 import { AppLayout } from './layouts/AppLayout';
@@ -16,6 +17,7 @@ function AppShell() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/leads" element={<LeadsPage />} />
         <Route path="/leads/:id" element={<LeadDetailPage />} />
+        <Route path="/integrations" element={<IntegrationsPage />} />
         <Route path="/customers" element={<CustomersPage />} />
         <Route path="/properties" element={<PropertiesPage />} />
         <Route path="/tasks" element={<TasksPage />} />
