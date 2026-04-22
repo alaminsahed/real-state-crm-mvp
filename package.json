@@ -1,0 +1,14 @@
+{
+  "name": "real-estate-crm-mvp",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.24.0",
+  "scripts": {
+    "dev": "pnpm -r --parallel --if-present dev",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm -r --if-present lint",
+    "db:generate": "pnpm --filter @crm/db db:generate",
+    "db:migrate": "pnpm --filter @crm/db db:migrate",
+    "db:seed": "pnpm --filter @crm/db db:seed"
+  }
+}

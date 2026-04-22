@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top left, #e2e8f0 0%, #f8fafc 38%, #f1f5f9 100%);
+  color: #0f172a;
+  font-family: Inter, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.ant-layout-sider .ant-menu-dark,
+.ant-layout-sider .ant-menu-dark .ant-menu-sub {
+  background: transparent;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background: rgba(59, 130, 246, 0.28) !important;
+  border-radius: 10px;
+}
