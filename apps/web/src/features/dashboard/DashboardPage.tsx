@@ -31,7 +31,7 @@ export function DashboardPage() {
   return (
     <Space direction="vertical" size="large" className="w-full">
       <Card
-        className="overflow-hidden border-0"
+        className="crm-hero-card overflow-hidden border-0"
         bodyStyle={{
           background:
             'linear-gradient(120deg, rgba(14,116,144,1) 0%, rgba(30,64,175,1) 45%, rgba(15,23,42,1) 100%)',
@@ -51,7 +51,7 @@ export function DashboardPage() {
             </p>
           </Col>
           <Col xs={24} lg={8}>
-            <Card className="border-0 bg-white/10 backdrop-blur-sm" bodyStyle={{ padding: 18 }}>
+            <Card className="crm-hero-metric border-0 bg-white/10 backdrop-blur-sm" bodyStyle={{ padding: 18 }}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm text-slate-100">Monthly Growth</span>
                 <ArrowUpOutlined className="text-emerald-300" />
@@ -65,7 +65,7 @@ export function DashboardPage() {
 
       <Row gutter={[16, 16]}>
         <Col xs={24} md={12} xl={6}>
-          <Card className="rounded-2xl border border-slate-100 shadow-sm">
+          <Card className="crm-stat-card rounded-2xl border border-slate-100 shadow-sm">
             <Statistic
               title="Active Leads"
               value={totalLeads}
@@ -75,7 +75,7 @@ export function DashboardPage() {
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <Card className="rounded-2xl border border-slate-100 shadow-sm">
+          <Card className="crm-stat-card rounded-2xl border border-slate-100 shadow-sm">
             <Statistic
               title="Customers Won"
               value={totalCustomers}
@@ -85,7 +85,7 @@ export function DashboardPage() {
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <Card className="rounded-2xl border border-slate-100 shadow-sm">
+          <Card className="crm-stat-card rounded-2xl border border-slate-100 shadow-sm">
             <Statistic
               title="Live Properties"
               value={totalProperties}
@@ -95,7 +95,7 @@ export function DashboardPage() {
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <Card className="rounded-2xl border border-slate-100 shadow-sm">
+          <Card className="crm-stat-card rounded-2xl border border-slate-100 shadow-sm">
             <Statistic
               title="Open Tasks"
               value={totalTasks}
@@ -108,7 +108,7 @@ export function DashboardPage() {
 
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
-          <Card title="Pipeline Health" className="rounded-2xl border border-slate-100 shadow-sm">
+          <Card title="Pipeline Health" className="crm-panel-card rounded-2xl border border-slate-100 shadow-sm">
             <div className="space-y-4">
               <div>
                 <div className="mb-1 flex items-center justify-between text-sm">
@@ -133,7 +133,7 @@ export function DashboardPage() {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card title="Portfolio Snapshot" className="rounded-2xl border border-slate-100 shadow-sm">
+          <Card title="Portfolio Snapshot" className="crm-panel-card rounded-2xl border border-slate-100 shadow-sm">
             <Space direction="vertical" size="middle" className="w-full">
               <div className="rounded-xl bg-slate-50 px-4 py-3">
                 <p className="m-0 text-xs uppercase tracking-wider text-slate-400">Average property value</p>

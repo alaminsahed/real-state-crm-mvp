@@ -38,12 +38,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <Layout className="min-h-screen bg-slate-50">
+    <Layout className="crm-app-shell min-h-screen bg-slate-50">
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
         width={260}
-        className="shadow-xl"
+        className="crm-app-sider shadow-xl"
         style={{
           background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 55%, #334155 100%)',
         }}
@@ -63,12 +63,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         />
       </Sider>
       <Layout>
-        <Header className="border-b border-slate-200 bg-white/80 px-6 backdrop-blur">
+        <Header className="crm-app-header border-b border-slate-200 bg-white/80 px-6 backdrop-blur">
           <div className="flex h-full items-center justify-between gap-4">
             <Input
               placeholder="Search listings, clients, leads..."
               prefix={<SearchOutlined className="text-slate-400" />}
-              className="max-w-md rounded-lg"
+              className="crm-header-search max-w-md rounded-lg"
             />
             <div className="flex items-center gap-3">
               <Badge dot>
@@ -81,16 +81,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <Avatar className="bg-blue-600">
                 {(session?.user.email ?? 'D').charAt(0).toUpperCase()}
               </Avatar>
-              <Button onClick={() => void handleLogout()}>Log out</Button>
+              <Button className="crm-logout-btn" onClick={() => void handleLogout()}>Log out</Button>
             </div>
           </div>
         </Header>
-        <Content className="p-6 lg:p-8">
+        <Content className="crm-app-content p-6 lg:p-8">
           <div className="mx-auto max-w-7xl">
             {children}
           </div>
         </Content>
-        <div className="px-8 pb-6 text-center text-xs text-slate-400">
+        <div className="crm-app-footer px-8 pb-6 text-center text-xs text-slate-400">
           Built for high-impact product demo screens
         </div>
       </Layout>

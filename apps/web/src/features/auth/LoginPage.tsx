@@ -32,8 +32,8 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <Card title="Sign in" style={{ width: 420 }}>
+    <div className="crm-login-screen flex min-h-screen items-center justify-center p-6">
+      <Card title="Sign in" className="crm-login-card" style={{ width: 420 }}>
         <Typography.Paragraph type="secondary">
           Log in with your Supabase email and password.
         </Typography.Paragraph>
