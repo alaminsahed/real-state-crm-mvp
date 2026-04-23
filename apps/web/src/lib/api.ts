@@ -1,4 +1,11 @@
-import type { Customer, Lead, Note, Property, Task } from './types';
+import type {
+  Customer,
+  Lead,
+  LeadSourceReportItem,
+  Note,
+  Property,
+  Task,
+} from './types';
 import { getValidAccessToken } from './supabaseAuth';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000';
@@ -56,5 +63,21 @@ export const api = {
       request<Note[]>(`/notes?entity_type=${entityType}&entity_id=${entityId}`),
     create: (body: { content: string; entityType: string; entityId: string }) =>
       request<Note>('/notes', { method: 'POST', body: JSON.stringify(body) }),
+  },
+  reports: {
+    leadSources: (params?: { start_date?: string; end_date?: string }) => {
+      const search = new URLSearchParams();
+      if (params?.start_date) {
+        search.set('start_date', params.start_date);
+      }
+      if (params?.end_date) {
+        search.set('end_date', params.end_date);
+      }
+
+      const query = search.toString();
+      return request<LeadSourceReportItem[]>(
+        `/reports/lead-sources${query ? `?${query}` : ''}`,
+      );
+    },
   },
 };

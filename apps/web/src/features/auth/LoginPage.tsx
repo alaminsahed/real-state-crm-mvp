@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, Typography, message } from 'antd';
+import { Alert, Button, Card, Form, Input, Typography } from 'antd';
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
@@ -10,6 +10,7 @@ type LoginFormValues = {
 
 export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,11 +22,12 @@ export function LoginPage() {
 
   const onSubmit = async (values: LoginFormValues) => {
     setSubmitting(true);
+    setLoginError(null);
     try {
       await login(values.email, values.password);
       navigate(redirectTo, { replace: true });
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Login failed');
+      setLoginError(error instanceof Error ? error.message : 'Login failed');
     } finally {
       setSubmitting(false);
     }
@@ -38,6 +40,11 @@ export function LoginPage() {
           Log in with your Supabase email and password.
         </Typography.Paragraph>
         <Form layout="vertical" onFinish={onSubmit}>
+          {loginError ? (
+            <Form.Item>
+              <Alert type="error" message={loginError} showIcon />
+            </Form.Item>
+          ) : null}
           <Form.Item
             name="email"
             label="Email"

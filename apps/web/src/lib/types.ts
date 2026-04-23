@@ -48,3 +48,8 @@ export interface Note {
   entityId: string;
   createdAt: string;
 }
+
+export interface LeadSourceReportItem {
+  source: string;
+  count: number;
+}

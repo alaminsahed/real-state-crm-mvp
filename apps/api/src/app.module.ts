@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { LeadsModule } from './leads/leads.module';
 import { NotesModule } from './notes/notes.module';
 import { PropertiesModule } from './properties/properties.module';
+import { ReportsModule } from './reports/reports.module';
 import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 
@@ -20,6 +21,7 @@ import { UsersModule } from './users/users.module';
     PropertiesModule,
     TasksModule,
     NotesModule,
+    ReportsModule,
   ],
 })
 export class AppModule {}

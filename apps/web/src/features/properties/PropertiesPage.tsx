@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EnvironmentOutlined, HomeOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Collapse, Form, Input, InputNumber, Modal, Space, Table, Tag } from 'antd';
+import { Button, Card, Collapse, Form, Image, Input, InputNumber, Modal, Space, Table, Tag, Upload } from 'antd';
+import type { UploadFile } from 'antd/es/upload/interface';
 import { useMemo, useState } from 'react';
 import { api } from '../../lib/api';
 
@@ -9,14 +10,25 @@ export function PropertiesPage() {
   const [titleFilter, setTitleFilter] = useState('');
   const [addressFilter, setAddressFilter] = useState('');
   const [minPriceFilter, setMinPriceFilter] = useState<number | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<UploadFile[]>([]);
+  const [propertyImagesById, setPropertyImagesById] = useState<Record<string, string[]>>({});
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
   const properties = useQuery({ queryKey: ['properties'], queryFn: api.properties.list });
 
   const createProperty = useMutation({
     mutationFn: api.properties.create,
-    onSuccess: () => {
+    onSuccess: (createdProperty) => {
+      const previewUrls = uploadedImages
+        .map((file) => file.thumbUrl ?? file.url ?? (file.originFileObj ? URL.createObjectURL(file.originFileObj) : ''))
+        .filter((url): url is string => Boolean(url));
+
+      if (previewUrls.length > 0) {
+        setPropertyImagesById((previous) => ({ ...previous, [createdProperty.id]: previewUrls }));
+      }
+
       form.resetFields();
+      setUploadedImages([]);
       setIsCreateModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ['properties'] });
     },
@@ -120,6 +132,33 @@ export function PropertiesPage() {
               ),
             },
             {
+              title: 'Images',
+              key: 'images',
+              width: 180,
+              render: (_value, row) => {
+                const images = propertyImagesById[row.id] ?? [];
+                if (images.length === 0) {
+                  return <span className="text-slate-400">-</span>;
+                }
+
+                return (
+                  <Space size={6}>
+                    {images.slice(0, 2).map((url, index) => (
+                      <Image
+                        key={`${row.id}-image-${index}`}
+                        src={url}
+                        width={40}
+                        height={40}
+                        className="rounded-md object-cover"
+                        preview={{ mask: 'Preview' }}
+                      />
+                    ))}
+                    {images.length > 2 ? <Tag>{`+${images.length - 2}`}</Tag> : null}
+                  </Space>
+                );
+              },
+            },
+            {
               title: 'Price',
               dataIndex: 'price',
               render: (value) => (
@@ -137,6 +176,7 @@ export function PropertiesPage() {
         open={isCreateModalOpen}
         onCancel={() => {
           form.resetFields();
+          setUploadedImages([]);
           setIsCreateModalOpen(false);
         }}
         footer={null}
@@ -158,6 +198,19 @@ export function PropertiesPage() {
           </Form.Item>
           <Form.Item name="description" label="Description">
             <Input.TextArea rows={3} placeholder="Short highlight for demo listing..." />
+          </Form.Item>
+          <Form.Item label="Property Images">
+            <Upload
+              listType="picture-card"
+              multiple
+              accept="image/*"
+              beforeUpload={() => false}
+              fileList={uploadedImages}
+              onChange={({ fileList }) => setUploadedImages(fileList)}
+            >
+              {uploadedImages.length < 8 ? '+ Upload' : null}
+            </Upload>
+            <p className="m-0 text-xs text-slate-400">MVP preview upload (frontend only).</p>
           </Form.Item>
           <Button type="primary" htmlType="submit" loading={createProperty.isPending} icon={<PlusOutlined />}>
             Create Listing

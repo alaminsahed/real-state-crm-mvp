@@ -7,6 +7,7 @@ import { LeadDetailPage } from './features/leads/LeadDetailPage';
 import { LeadsPage } from './features/leads/LeadsPage';
 import { IntegrationsPage } from './features/integrations/IntegrationsPage';
 import { PropertiesPage } from './features/properties/PropertiesPage';
+import { ReportsPage } from './features/reports/ReportsPage';
 import { TasksPage } from './features/tasks/TasksPage';
 import { AppLayout } from './layouts/AppLayout';
 
@@ -21,6 +22,7 @@ function AppShell() {
         <Route path="/customers" element={<CustomersPage />} />
         <Route path="/properties" element={<PropertiesPage />} />
         <Route path="/tasks" element={<TasksPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </AppLayout>

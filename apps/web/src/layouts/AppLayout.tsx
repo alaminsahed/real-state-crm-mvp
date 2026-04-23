@@ -2,6 +2,7 @@ import {
   ApartmentOutlined,
   BellOutlined,
   DashboardOutlined,
+  BarChartOutlined,
   TeamOutlined,
   UnorderedListOutlined,
   UserOutlined,
@@ -39,6 +40,17 @@ const items = [
     label: <Link to="/tasks">Tasks</Link>,
     icon: <UnorderedListOutlined />,
   },
+  {
+    key: "reports",
+    label: "Reports",
+    icon: <BarChartOutlined />,
+    children: [
+      {
+        key: "/reports",
+        label: <Link to="/reports">Lead Source Report</Link>,
+      },
+    ],
+  },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -47,8 +59,22 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { session, logout } = useAuth();
 
   const selectedKey = useMemo(() => {
-    const exact = items.find((item) => location.pathname.startsWith(item.key));
-    return exact?.key ?? "/dashboard";
+    for (const item of items) {
+      if (item.key.startsWith("/") && location.pathname.startsWith(item.key)) {
+        return item.key;
+      }
+
+      if (item.children) {
+        const childMatch = item.children.find((child) =>
+          location.pathname.startsWith(child.key),
+        );
+        if (childMatch) {
+          return childMatch.key;
+        }
+      }
+    }
+
+    return "/dashboard";
   }, [location.pathname]);
 
   const handleLogout = async () => {
@@ -82,6 +108,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           theme="dark"
           mode="inline"
           selectedKeys={[selectedKey]}
+          defaultOpenKeys={location.pathname.startsWith("/reports") ? ["reports"] : []}
           items={items}
           className="bg-transparent px-2"
         />
